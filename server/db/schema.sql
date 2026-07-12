@@ -9,6 +9,8 @@ CREATE TABLE users (
   role ENUM('Fleet Manager','Dispatcher','Safety Officer','Financial Analyst') NOT NULL,
   failed_attempts INT DEFAULT 0,
   locked_until DATETIME NULL,
+  reset_token VARCHAR(255) NULL,
+  reset_token_expires DATETIME NULL,
   created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 

@@ -111,4 +111,79 @@ router.post('/login', async (req, res) => {
   }
 });
 
+// FORGOT PASSWORD
+router.post('/forgot-password', async (req, res) => {
+  try {
+    const { email, role } = req.body;
+    if (!email || !role) {
+      return res.status(400).json({ error: 'Email and role are required' });
+    }
+
+    // Check user matching email and role
+    const [users] = await pool.query('SELECT * FROM users WHERE email = ? AND role = ?', [email, role]);
+    if (users.length === 0) {
+      return res.status(404).json({ error: 'No account registered with this email and role combination.' });
+    }
+
+    const user = users[0];
+    
+    // Generate code
+    const resetCode = Math.floor(100000 + Math.random() * 900000).toString();
+    
+    // Expires in 15 mins
+    const expiresAt = new Date(Date.now() + 15 * 60 * 1000);
+    
+    await pool.query(
+      'UPDATE users SET reset_token = ?, reset_token_expires = ? WHERE id = ?',
+      [resetCode, expiresAt, user.id]
+    );
+
+    const { sendResetPasswordEmail } = require('../utils/mailer');
+    await sendResetPasswordEmail(user.email, user.name, resetCode);
+
+    res.json({ message: 'A verification code has been dispatched to your email address.' });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+});
+
+// RESET PASSWORD
+router.post('/reset-password', async (req, res) => {
+  try {
+    const { email, role, code, newPassword } = req.body;
+    if (!email || !role || !code || !newPassword) {
+      return res.status(400).json({ error: 'All fields are required (email, role, code, newPassword)' });
+    }
+
+    const [users] = await pool.query('SELECT * FROM users WHERE email = ? AND role = ?', [email, role]);
+    if (users.length === 0) {
+      return res.status(404).json({ error: 'Account not found.' });
+    }
+
+    const user = users[0];
+
+    // Verify token exists and is valid
+    if (!user.reset_token || user.reset_token !== code) {
+      return res.status(400).json({ error: 'Invalid verification pin.' });
+    }
+
+    if (new Date(user.reset_token_expires) < new Date()) {
+      return res.status(400).json({ error: 'Verification pin has expired. Please request a new one.' });
+    }
+
+    // Update
+    const passwordHash = await bcrypt.hash(newPassword, 10);
+    await pool.query(
+      'UPDATE users SET password_hash = ?, reset_token = NULL, reset_token_expires = NULL, failed_attempts = 0, locked_until = NULL WHERE id = ?',
+      [passwordHash, user.id]
+    );
+
+    res.json({ message: 'Password has been reprogrammed successfully. You may now login.' });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+});
+
 module.exports = router;
