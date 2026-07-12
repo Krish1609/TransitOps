@@ -1,75 +1,52 @@
+# TransitOps Frontend Console
 
-# Getting Started with Create React App
+This is the React-based frontend dashboard client for the TransitOps fleet management platform. It renders live telemetry graphs, interactive dispatch sheets, PII security registers, and settings consoles.
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+---
 
-## Available Scripts
+## 🚀 Quick Start
 
-In the project directory, you can run:
+1. **Install Packages**:
+   ```bash
+   npm install
+   ```
 
-### `npm start`
+2. **Configure Port Binding (Optional)**:
+   By default, the client launches on port `3000`. If a port conflict arises (e.g. port `3000` is occupied), configure a secondary port setting:
+   ```bash
+   # Bash
+   PORT=3050 BROWSER=none npm start
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+   # Windows PowerShell
+   $env:PORT=3050; $env:BROWSER="none"; npm start
+   ```
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+3. **Start Development Server**:
+   ```bash
+   npm start
+   ```
+   *The client console will launch at `http://localhost:3050`.*
 
-### `npm test`
+---
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+## 📁 Component Directory map
 
-### `npm run build`
+* **`src/pages/Login.jsx`** — Sign-in console containing Forgot Password OTP prompts and password reprogrammers.
+* **`src/pages/Dashboard.jsx`** — High-level telemetry dashboards detailing fleet utilization percentiles and recent dispatch ticks.
+* **`src/pages/VehicleRegistry.jsx`** — Ledger grid for registering, tracking, or retiring trucks and vans.
+* **`src/pages/Drivers.jsx`** — Safety ledger listing commercial CDL details, contact numbers, and safety audit override triggers.
+* **`src/pages/TripDispatcher.jsx`** — Dispatch console for creating draft trips and executing safety checks before dispatching assets.
+* **`src/pages/Maintenance.jsx`** — Maintenance logs monitoring available versus workshop states.
+* **`src/pages/FuelExpenses.jsx`** — Expense monitoring logs.
+* **`src/pages/Analytics.jsx`** — Recharts-based KPI cards and monthly operational cost summaries with CSV spreadsheet exporters.
+* **`src/pages/Settings.jsx`** — Global depot configurations and role-based permissions matrix.
+* **`src/pages/Profile.jsx`** — Operator profile details card and secure password updating engine.
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+---
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+## 🎨 Theme & Styling
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
-
-### `npm run eject`
-
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
-
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
-
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
-
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
-
-## Learn More
-
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
-
-To learn React, check out the [React documentation](https://reactjs.org/).
-
-### Code Splitting
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
-
-### Analyzing the Bundle Size
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
-
-### Making a Progressive Web App
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
-
-### Advanced Configuration
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
-
-### Deployment
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
-
-### `npm run build` fails to minify
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
-
-# TransitOps
-Smart Transport Operations Platform 
-
+TransitOps is built using **Vanilla CSS** and customized Tailwind style classes. It implements:
+* Sleek dark-slate backgrounds (`bg-slate-950` / `bg-slate-900`) and borders (`border-slate-800`).
+* Dynamic, interactive hover transitions for form elements and sidebar items.
+* Responsive viewport support for desktop workstations and tablet displays (768px/1024px breakpoints).
