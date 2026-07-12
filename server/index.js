@@ -14,6 +14,7 @@ const driversRoutes = require('./routes/drivers');
 const maintenanceRoutes = require('./routes/maintenance');
 const fuelRoutes = require('./routes/fuel');
 const expenseRoutes = require('./routes/expenses');
+const analyticsRoutes = require('./routes/analytics');
 
 app.use('/api/auth', authRoutes);
 app.use('/api/dashboard', dashboardRoutes);
@@ -23,6 +24,7 @@ app.use('/api/drivers', driversRoutes);
 app.use('/api/maintenance', maintenanceRoutes);
 app.use('/api/fuel-logs', fuelRoutes);
 app.use('/api/expenses', expenseRoutes);
+app.use('/api/analytics', analyticsRoutes);
 
 app.get('/api/health', (req, res) => res.json({ status: 'ok' }));
 

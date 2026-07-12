@@ -10,6 +10,7 @@ import Drivers from './pages/Drivers';
 import TripDispatcher from './pages/TripDispatcher';
 import Maintenance from './pages/Maintenance';
 import FuelExpenses from './pages/FuelExpenses';
+import Analytics from './pages/Analytics';
 
 function App() {
   return (
@@ -81,6 +82,17 @@ function App() {
               <ProtectedRoute>
                 <Layout>
                   <FuelExpenses />
+                </Layout>
+              </ProtectedRoute>
+            }
+          />
+
+          <Route
+            path="/analytics"
+            element={
+              <ProtectedRoute>
+                <Layout>
+                  <Analytics />
                 </Layout>
               </ProtectedRoute>
             }
