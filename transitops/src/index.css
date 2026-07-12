@@ -17,3 +17,31 @@ code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
     monospace;
 }
+
+/* Custom button styled pill matching modern UI instructions */
+.button-primary-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.625rem 1.25rem;
+  background-color: #4f46e5; /* Indigo 605 */
+  color: #ffffff;
+  font-size: 0.8125rem; /* text-[13px] approx */
+  font-weight: 600; /* font-semibold */
+  border-radius: 9999px; /* rounded-full */
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: 0 4px 6px -1px rgba(79, 70, 229, 0.25), 0 2px 4px -2px rgba(79, 70, 229, 0.25);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  cursor: pointer;
+}
+
+.button-primary-pill:hover {
+  background-color: #4338ca; /* Indigo 705 */
+  box-shadow: 0 8px 12px -3px rgba(79, 70, 229, 0.4), 0 4px 6px -4px rgba(79, 70, 229, 0.4);
+  transform: translateY(-1px);
+}
+
+.button-primary-pill:active {
+  transform: translateY(0);
+}
+

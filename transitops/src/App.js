@@ -5,6 +5,7 @@ import ProtectedRoute from './components/ProtectedRoute';
 import Layout from './components/Layout';
 import Login from './pages/Login';
 import Dashboard from './pages/Dashboard';
+import VehicleRegistry from './pages/VehicleRegistry';
 
 function App() {
   return (
@@ -26,6 +27,17 @@ function App() {
             }
           />
 
+          <Route
+            path="/vehicles"
+            element={
+              <ProtectedRoute>
+                <Layout>
+                  <VehicleRegistry />
+                </Layout>
+              </ProtectedRoute>
+            }
+          />
+
           {/* Default / Fallback redirect */}
           <Route path="*" element={<Navigate to="/dashboard" replace />} />
         </Routes>
@@ -33,5 +45,6 @@ function App() {
     </AuthProvider>
   );
 }
+
 
 export default App;
