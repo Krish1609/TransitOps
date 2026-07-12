@@ -6,6 +6,8 @@ import Layout from './components/Layout';
 import Login from './pages/Login';
 import Dashboard from './pages/Dashboard';
 import VehicleRegistry from './pages/VehicleRegistry';
+import Drivers from './pages/Drivers';
+import TripDispatcher from './pages/TripDispatcher';
 
 function App() {
   return (
@@ -33,6 +35,28 @@ function App() {
               <ProtectedRoute>
                 <Layout>
                   <VehicleRegistry />
+                </Layout>
+              </ProtectedRoute>
+            }
+          />
+
+          <Route
+            path="/drivers"
+            element={
+              <ProtectedRoute>
+                <Layout>
+                  <Drivers />
+                </Layout>
+              </ProtectedRoute>
+            }
+          />
+
+          <Route
+            path="/trips"
+            element={
+              <ProtectedRoute>
+                <Layout>
+                  <TripDispatcher />
                 </Layout>
               </ProtectedRoute>
             }
