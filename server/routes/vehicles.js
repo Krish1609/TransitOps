@@ -163,5 +163,39 @@ router.delete('/:id', requireAuth, async (req, res) => {
   }
 });
 
+// GET /api/vehicles/:id/operational-cost
+router.get('/:id/operational-cost', requireAuth, async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    const [vehicle] = await pool.query('SELECT reg_no FROM vehicles WHERE id = ?', [id]);
+    if (vehicle.length === 0) {
+      return res.status(404).json({ error: 'Vehicle not found.' });
+    }
+
+    const [fuelRows] = await pool.query('SELECT COALESCE(SUM(cost), 0) AS total FROM fuel_logs WHERE vehicle_id = ?', [id]);
+    const [maintenanceRows] = await pool.query('SELECT COALESCE(SUM(cost), 0) AS total FROM maintenance_logs WHERE vehicle_id = ?', [id]);
+    const [expenseRows] = await pool.query('SELECT COALESCE(SUM(toll + misc), 0) AS total FROM expenses WHERE vehicle_id = ?', [id]);
+
+    const fuelCost = parseFloat(fuelRows[0].total);
+    const maintenanceCost = parseFloat(maintenanceRows[0].total);
+    const expenseCost = parseFloat(expenseRows[0].total);
+
+    const totalOperationalCost = fuelCost + maintenanceCost;
+
+    res.json({
+      vehicle_id: parseInt(id),
+      reg_no: vehicle[0].reg_no,
+      fuel_cost: fuelCost,
+      maintenance_cost: maintenanceCost,
+      other_expense_cost: expenseCost,
+      total_operational_cost: totalOperationalCost
+    });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+});
+
 module.exports = router;
 
