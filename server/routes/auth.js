@@ -186,4 +186,58 @@ router.post('/reset-password', async (req, res) => {
   }
 });
 
+// UPDATE PROFILE
+const { requireAuth } = require('../middleware/auth');
+router.put('/profile', requireAuth, async (req, res) => {
+  try {
+    const { name, currentPassword, newPassword } = req.body;
+    const userId = req.user.id;
+
+    if (!name) {
+      return res.status(400).json({ error: 'Name is required' });
+    }
+
+    // Fetch user
+    const [users] = await pool.query('SELECT * FROM users WHERE id = ?', [userId]);
+    if (users.length === 0) {
+      return res.status(404).json({ error: 'User not found' });
+    }
+    const user = users[0];
+
+    // If password update requested
+    if (currentPassword && newPassword) {
+      const isPasswordValid = await bcrypt.compare(currentPassword, user.password_hash);
+      if (!isPasswordValid) {
+        return res.status(400).json({ error: 'Current password specified is incorrect' });
+      }
+
+      if (newPassword.length < 6) {
+        return res.status(400).json({ error: 'New password must be at least 6 characters long' });
+      }
+
+      const passwordHash = await bcrypt.hash(newPassword, 10);
+      await pool.query(
+        'UPDATE users SET name = ?, password_hash = ? WHERE id = ?',
+        [name, passwordHash, userId]
+      );
+    } else {
+      // Just update name
+      await pool.query('UPDATE users SET name = ? WHERE id = ?', [name, userId]);
+    }
+
+    res.json({
+      message: 'Profile settings updated successfully',
+      user: {
+        id: user.id,
+        name,
+        email: user.email,
+        role: user.role
+      }
+    });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+});
+
 module.exports = router;

@@ -16,6 +16,7 @@ const Layout = ({ children }) => {
     { name: 'Fuel & Expenses', path: '/fuel-expenses', icon: 'M12 6v12m-3-2.818l.22.029a1.42 1.42 0 00.177.004M15 10.182a1.42 1.42 0 00-1-1.393L12 8M9 13.818a1.42 1.42 0 001 1.393L12 16M3 7.5A2.25 2.25 0 015.25 5.25h13.5A2.25 2.25 0 0121 7.5v9a2.25 2.25 0 01-2.25 2.25H5.25A2.25 2.25 0 013 16.5v-9z' },
     { name: 'Analytics', path: '/analytics', icon: 'M3 13.125C3 12.504 3.504 12 4.125 12h2.25c.621 0 1.125.504 1.125 1.125v5.25c0 .621-.504 1.125-1.125 1.125h-2.25A1.125 1.125 0 0 1 3 18.375v-5.25ZM9.75 8.625c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125v9.75c0 .621-.504 1.125-1.125 1.125h-2.25a1.125 1.125 0 0 1-1.125-1.125v-9.75ZM16.5 4.125c0-.621.504-1.125 1.125-1.125h2.25C20.496 3 21 3.504 21 4.125v14.25c0 .621-.504 1.125-1.125 1.125h-2.25a1.125 1.125 0 0 1-1.125-1.125V4.125Z' },
     { name: 'Settings', path: '/settings', icon: 'M9.594 3.94c.09-.542.56-.94 1.11-.94h2.593c.55 0 1.02.398 1.11.94l.213 1.281c.063.374.313.686.645.87.074.04.147.083.22.127.324.196.72.257 1.075.124l1.217-.456a1.125 1.125 0 0 1 1.37.49l1.296 2.247a1.125 1.125 0 0 1-.26 1.43l-1.003.828c-.293.241-.438.613-.43.992a7.723 7.723 0 0 1 0 .252c-.008.379.137.751.43.992l1.003.828c.47.388.58 1.074.26 1.43l-1.297 2.247a1.125 1.125 0 0 1-1.37.491l-1.216-.456c-.356-.133-.751-.072-1.076.124a6.57 6.57 0 0 1-.22.128c-.331.183-.581.495-.644.869l-.213 1.28c-.09.543-.56.94-1.11.94h-2.594c-.55 0-1.02-.398-1.11-.94l-.213-1.281c-.062-.374-.312-.686-.644-.87a6.52 6.52 0 0 1-.22-.127c-.325-.196-.72-.257-1.076-.124l-1.217.456a1.125 1.125 0 0 1-1.369-.49l-1.297-2.247a1.125 1.125 0 0 1 .26-1.43l1.004-.827c.292-.24.437-.613.43-.992a6.932 6.932 0 0 1 0-.252c.007-.379-.138-.751-.43-.992l-1.004-.828a1.125 1.125 0 0 1-.26-1.43l1.297-2.247a1.125 1.125 0 0 1 1.37-.491l1.216.456c.356.133.751.072 1.076-.124.072-.044.146-.087.22-.128.332-.183.582-.495.645-.869l.213-1.28Z M15 12a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z' },
+    { name: 'Profile', path: '/profile', icon: 'M17.982 18.725A7.488 7.488 0 0 0 12 15.75a7.488 7.488 0 0 0-5.982 2.975m11.964-1.25A7.488 7.488 0 0 0 12 11.53c-2.3 0-4.408.87-6.012 2.296m11.964 1.25A7.493 7.493 0 0 1 12 18a7.493 7.493 0 0 1-5.982-2.975m11.964-3.05a3.75 3.75 0 1 0-7.5 0 3.75 3.75 0 0 0 7.5 0Z' },
   ];
 
   const handleSignOut = () => {
@@ -46,8 +47,8 @@ const Layout = ({ children }) => {
                   to={item.path}
                   className={`flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition-all group ${
                     isActive
-                      ? 'bg-indigo-600 text-white shadow-lg shadow-indigo-600/15'
-                      : 'text-slate-400 hover:text-slate-200 hover:bg-slate-800/40'
+                       ? 'bg-indigo-600 text-white shadow-lg shadow-indigo-600/15'
+                       : 'text-slate-400 hover:text-slate-200 hover:bg-slate-800/40'
                   }`}
                 >
                   <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.8} stroke="currentColor" className="w-[18px] h-[18px]">
@@ -62,15 +63,15 @@ const Layout = ({ children }) => {
 
         {/* User Card footer */}
         <div className="p-4 border-t border-slate-900/80 bg-slate-900/20">
-          <div className="flex items-center gap-3 mb-4 px-2">
-            <div className="w-9 h-9 rounded-full bg-slate-850 border border-slate-800 flex items-center justify-center font-bold text-indigo-400 text-xs shadow-inner">
+          <Link to="/profile" className="flex items-center gap-3 mb-4 px-2 group cursor-pointer">
+            <div className="w-9 h-9 rounded-full bg-slate-850 border border-slate-805 group-hover:border-indigo-500/45 flex items-center justify-center font-bold text-indigo-400 text-xs shadow-inner transition-colors">
               {user?.name ? user.name[0].toUpperCase() : 'U'}
             </div>
             <div className="min-w-0 flex-1">
-              <p className="text-xs font-semibold text-white truncate">{user?.name}</p>
+              <p className="text-xs font-semibold text-white group-hover:text-indigo-400 truncate transition-colors">{user?.name}</p>
               <p className="text-[10px] text-slate-500 truncate">{user?.role}</p>
             </div>
-          </div>
+          </Link>
           <button
             onClick={handleSignOut}
             className="w-full py-2.5 bg-slate-900 hover:bg-slate-850 text-slate-300 font-medium rounded-xl text-xs border border-slate-800/80 hover:border-slate-700 transition-all flex items-center justify-center gap-2"
