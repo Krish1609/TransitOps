@@ -234,22 +234,26 @@ const Login = () => {
               </div>
             </div>
 
-            {/* Remember Me and Extra options */}
-            <div className="flex items-center justify-between pt-1">
-              <label className="flex items-center gap-2 cursor-pointer group">
-                <input
-                  type="checkbox"
-                  checked={rememberMe}
-                  onChange={(e) => setRememberMe(e.target.checked)}
-                  className="sr-only peer"
-                />
-                <div className="w-4 h-4 bg-slate-950/80 border border-slate-800 rounded flex items-center justify-center peer-checked:bg-indigo-650 peer-checked:border-indigo-500 transition-all">
-                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={3} className="w-2.5 h-2.5 text-white opacity-0 peer-checked:opacity-100 transition-opacity">
-                    <polyline points="20 6 9 17 4 12" />
-                  </svg>
-                </div>
-                <span className="text-xs text-slate-400 group-hover:text-slate-200 transition-colors">Remember me</span>
-              </label>
+             {/* Remember Me and Extra options */}
+             <div className="flex items-center justify-between pt-1">
+               <label className="flex items-center gap-2 cursor-pointer group">
+                 <input
+                   type="checkbox"
+                   checked={rememberMe}
+                   onChange={(e) => setRememberMe(e.target.checked)}
+                   className="sr-only"
+                 />
+                 <div className={`w-4 h-4 rounded flex items-center justify-center transition-all ${
+                   rememberMe ? 'bg-indigo-600 border border-indigo-500' : 'bg-slate-950/80 border border-slate-800'
+                 }`}>
+                   <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={3} className={`w-2.5 h-2.5 text-white transition-opacity ${
+                     rememberMe ? 'opacity-100' : 'opacity-0'
+                   }`}>
+                     <polyline points="20 6 9 17 4 12" />
+                   </svg>
+                 </div>
+                 <span className="text-xs text-slate-400 group-hover:text-slate-200 transition-colors">Remember me</span>
+               </label>
               <button 
                 type="button" 
                 onClick={() => { setErrorMsg(''); setSuccessMsg(''); setView('forgot'); }} 
