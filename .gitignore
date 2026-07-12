@@ -1,0 +1,14 @@
+# Package manager directories
+node_modules/
+transitops/node_modules/
+server/node_modules/
+
+# Environment configurations
+.env
+server/.env
+transitops/.env
+
+# Build outputs
+build/
+dist/
+.DS_Store
