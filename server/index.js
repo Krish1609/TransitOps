@@ -15,6 +15,10 @@ const maintenanceRoutes = require('./routes/maintenance');
 const fuelRoutes = require('./routes/fuel');
 const expenseRoutes = require('./routes/expenses');
 const analyticsRoutes = require('./routes/analytics');
+const adminRoutes = require('./routes/admin');
+
+// Register cron schedules
+require('./jobs/licenseCheck');
 
 app.use('/api/auth', authRoutes);
 app.use('/api/dashboard', dashboardRoutes);
@@ -25,6 +29,7 @@ app.use('/api/maintenance', maintenanceRoutes);
 app.use('/api/fuel-logs', fuelRoutes);
 app.use('/api/expenses', expenseRoutes);
 app.use('/api/analytics', analyticsRoutes);
+app.use('/api/admin', adminRoutes);
 
 app.get('/api/health', (req, res) => res.json({ status: 'ok' }));
 

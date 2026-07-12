@@ -31,6 +31,7 @@ CREATE TABLE drivers (
   license_category VARCHAR(20),
   license_expiry DATE NOT NULL,
   contact_no VARCHAR(20),
+  email VARCHAR(150) NULL,
   safety_score DECIMAL(5,2) DEFAULT 100,
   status ENUM('Available','On Trip','Off Duty','Suspended') DEFAULT 'Available',
   created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP

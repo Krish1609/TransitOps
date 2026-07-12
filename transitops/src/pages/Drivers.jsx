@@ -27,6 +27,7 @@ const Drivers = () => {
     contact_no: '',
     safety_score: '100',
     status: 'Available',
+    email: '',
   });
   const [formError, setFormError] = useState('');
 
@@ -75,6 +76,7 @@ const Drivers = () => {
       contact_no: '',
       safety_score: '100',
       status: 'Available',
+      email: '',
     });
     setIsModalOpen(true);
   };
@@ -91,8 +93,27 @@ const Drivers = () => {
       contact_no: driver.contact_no || '',
       safety_score: String(driver.safety_score),
       status: driver.status,
+      email: driver.email || '',
     });
     setIsModalOpen(true);
+  };
+
+  const handleTriggerExpiryCheck = async () => {
+    try {
+      const token = sessionStorage.getItem('token');
+      const config = {
+        headers: { Authorization: `Bearer ${token}` }
+      };
+      const response = await axios.post('http://localhost:5000/api/admin/check-licenses', {}, config);
+      alert(`License expiry audit complete: ${response.data.emails_dispatched} reminder email(s) dispatched via SMTP.`);
+    } catch (err) {
+      console.error(err);
+      if (err.response && err.response.status === 403) {
+        alert("Operation Forbidden: Driver expiry notification checks are restricted to Safety Officers and Fleet Managers.");
+      } else {
+        alert("Failed to execute SMTP license checks. Verify connection settings.");
+      }
+    }
   };
 
   const handleFormSubmit = async (e) => {
@@ -118,6 +139,7 @@ const Drivers = () => {
         contact_no: formData.contact_no.trim(),
         safety_score: parseFloat(formData.safety_score) || 100,
         status: formData.status,
+        email: formData.email.trim() || null,
       };
 
       if (modalMode === 'add') {
@@ -188,15 +210,26 @@ const Drivers = () => {
           <h2 className="text-xl font-bold text-white tracking-tight text-left">Drivers & Safety</h2>
           <p className="text-xs text-slate-500 text-left">Audit driver compliance profiles, safety scores, and commercial credentials</p>
         </div>
-        <button
-          onClick={handleOpenAddModal}
-          className="button-primary-pill self-start md:self-auto"
-        >
-          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2.5} stroke="currentColor" className="w-4 h-4">
-            <path strokeLinecap="round" strokeLinejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
-          </svg>
-          <span>Add Driver</span>
-        </button>
+        <div className="flex flex-wrap items-center gap-3">
+          <button
+            onClick={handleTriggerExpiryCheck}
+            className="px-4 py-2 bg-slate-900 hover:bg-slate-850 text-slate-300 font-medium rounded-xl text-xs border border-slate-800 hover:border-slate-700 transition-all flex items-center justify-center gap-2"
+          >
+            <svg className="w-4 h-4 text-indigo-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+              <path strokeLinecap="round" strokeLinejoin="round" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+            </svg>
+            <span>Trigger Expiry Check</span>
+          </button>
+          <button
+            onClick={handleOpenAddModal}
+            className="button-primary-pill self-start md:self-auto"
+          >
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2.5} stroke="currentColor" className="w-4 h-4">
+              <path strokeLinecap="round" strokeLinejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
+            </svg>
+            <span>Add Driver</span>
+          </button>
+        </div>
       </div>
 
       {/* Main Error */}
@@ -281,6 +314,7 @@ const Drivers = () => {
                       <tr key={d.id} className={expiredRowClass}>
                         <td className="py-4 px-4 font-semibold text-slate-200">
                           <div>{d.name}</div>
+                          {d.email && <div className="text-[10px] text-slate-500 font-normal">{d.email}</div>}
                           {d.license_expired && (
                             <span className="inline-block mt-0.5 text-[9px] uppercase tracking-wider font-bold text-red-400 bg-red-950/50 border border-red-500/10 px-1.5 py-0.25 rounded-md">
                               Expired License
@@ -498,6 +532,21 @@ const Drivers = () => {
                     className="w-full bg-slate-950/80 border border-slate-805 text-slate-100 placeholder-slate-650 rounded-xl px-3 py-2 text-xs focus:outline-none focus:border-indigo-500/70"
                   />
                 </div>
+              </div>
+
+              {/* Email */}
+              <div>
+                <label htmlFor="email-input" className="block text-[10px] font-semibold uppercase tracking-wider text-slate-400 mb-1 text-left">
+                  Email Address (for safety expirations)
+                </label>
+                <input
+                  id="email-input"
+                  type="email"
+                  value={formData.email}
+                  onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+                  placeholder="e.g. driver@transitops.com"
+                  className="w-full bg-slate-950/80 border border-slate-805 text-slate-100 placeholder-slate-650 rounded-xl px-3 py-2 text-xs focus:outline-none focus:border-indigo-500/70"
+                />
               </div>
 
               {/* Status Select */}

@@ -2,6 +2,7 @@ const express = require('express');
 const router = express.Router();
 const pool = require('../db/pool');
 const { requireAuth } = require('../middleware/auth');
+const { encrypt, decrypt } = require('../utils/encryption');
 
 // GET /api/drivers (list all drivers with computed columns)
 router.get('/', requireAuth, async (req, res) => {
@@ -34,8 +35,14 @@ router.get('/', requireAuth, async (req, res) => {
       const tot = Number(driver.total || 0);
       const trip_completion_pct = tot > 0 ? Math.round((comp / tot) * 100) : 100;
 
+      // Decrypt sensitive fields
+      const decLicense = decrypt(driver.license_no);
+      const decContact = decrypt(driver.contact_no);
+
       return {
         ...driver,
+        license_no: decLicense,
+        contact_no: decContact,
         license_expiry: expiryStr,
         license_expired: expired,
         trip_completion_pct
@@ -52,7 +59,7 @@ router.get('/', requireAuth, async (req, res) => {
 // POST /api/drivers - Create a driver
 router.post('/', requireAuth, async (req, res) => {
   try {
-    const { name, license_no, license_category, license_expiry, contact_no, safety_score, status } = req.body;
+    const { name, license_no, license_category, license_expiry, contact_no, safety_score, status, email } = req.body;
 
     if (!name || !license_no || !license_expiry) {
       return res.status(400).json({ error: 'All fields (name, license_no, license_expiry) are required.' });
@@ -60,31 +67,42 @@ router.post('/', requireAuth, async (req, res) => {
 
     const trimmedLicenseNo = license_no.trim();
 
-    // Pre-check for license key uniqueness
-    const [existing] = await pool.query('SELECT id FROM drivers WHERE license_no = ?', [trimmedLicenseNo]);
-    if (existing.length > 0) {
+    // Pre-check for license key uniqueness (decrypting all records in memory)
+    const [allDrivers] = await pool.query('SELECT id, license_no FROM drivers');
+    const duplicate = allDrivers.find(d => decrypt(d.license_no).toLowerCase() === trimmedLicenseNo.toLowerCase());
+    if (duplicate) {
       return res.status(400).json({ error: 'License number already registered.' });
     }
 
+    // Encrypt sensitive records
+    const encryptedLicense = encrypt(trimmedLicenseNo);
+    const encryptedContact = encrypt(contact_no || '');
+
     const query = `
-      INSERT INTO drivers (name, license_no, license_category, license_expiry, contact_no, safety_score, status)
-      VALUES (?, ?, ?, ?, ?, ?, ?)
+      INSERT INTO drivers (name, license_no, license_category, license_expiry, contact_no, safety_score, status, email)
+      VALUES (?, ?, ?, ?, ?, ?, ?, ?)
     `;
     const params = [
       name.trim(),
-      trimmedLicenseNo,
+      encryptedLicense,
       license_category || '',
       license_expiry,
-      contact_no || '',
+      encryptedContact,
       safety_score === undefined || safety_score === '' ? 100.00 : parseFloat(safety_score),
-      status || 'Available'
+      status || 'Available',
+      email || null
     ];
 
     const [result] = await pool.query(query, params);
     
     // Fetch inserted driver
     const [insertedRows] = await pool.query('SELECT * FROM drivers WHERE id = ?', [result.insertId]);
-    res.status(201).json(insertedRows[0]);
+    const driver = insertedRows[0];
+    res.status(201).json({
+      ...driver,
+      license_no: decrypt(driver.license_no),
+      contact_no: decrypt(driver.contact_no)
+    });
   } catch (err) {
     console.error(err);
     if (err.code === 'ER_DUP_ENTRY') {
@@ -98,7 +116,7 @@ router.post('/', requireAuth, async (req, res) => {
 router.put('/:id', requireAuth, async (req, res) => {
   try {
     const { id } = req.params;
-    const { name, license_no, license_category, license_expiry, contact_no, safety_score, status } = req.body;
+    const { name, license_no, license_category, license_expiry, contact_no, safety_score, status, email } = req.body;
 
     if (!name || !license_no || !license_expiry) {
       return res.status(400).json({ error: 'All fields (name, license_no, license_expiry) are required.' });
@@ -107,24 +125,30 @@ router.put('/:id', requireAuth, async (req, res) => {
     const trimmedLicenseNo = license_no.trim();
 
     // Pre-check excluding current ID
-    const [existing] = await pool.query('SELECT id FROM drivers WHERE license_no = ? AND id != ?', [trimmedLicenseNo, id]);
-    if (existing.length > 0) {
+    const [allDrivers] = await pool.query('SELECT id, license_no FROM drivers');
+    const duplicate = allDrivers.find(d => decrypt(d.license_no).toLowerCase() === trimmedLicenseNo.toLowerCase() && d.id !== parseInt(id));
+    if (duplicate) {
       return res.status(400).json({ error: 'License number already registered.' });
     }
 
+    // Encrypt sensitive records
+    const encryptedLicense = encrypt(trimmedLicenseNo);
+    const encryptedContact = encrypt(contact_no || '');
+
     const query = `
       UPDATE drivers
-      SET name = ?, license_no = ?, license_category = ?, license_expiry = ?, contact_no = ?, safety_score = ?, status = ?
+      SET name = ?, license_no = ?, license_category = ?, license_expiry = ?, contact_no = ?, safety_score = ?, status = ?, email = ?
       WHERE id = ?
     `;
     const params = [
       name.trim(),
-      trimmedLicenseNo,
+      encryptedLicense,
       license_category || '',
       license_expiry,
-      contact_no || '',
+      encryptedContact,
       safety_score === undefined || safety_score === '' ? 100.00 : parseFloat(safety_score),
       status || 'Available',
+      email || null,
       id
     ];
 
@@ -134,7 +158,12 @@ router.put('/:id', requireAuth, async (req, res) => {
     }
 
     const [updatedRows] = await pool.query('SELECT * FROM drivers WHERE id = ?', [id]);
-    res.json(updatedRows[0]);
+    const driver = updatedRows[0];
+    res.json({
+      ...driver,
+      license_no: decrypt(driver.license_no),
+      contact_no: decrypt(driver.contact_no)
+    });
   } catch (err) {
     console.error(err);
     if (err.code === 'ER_DUP_ENTRY') {
