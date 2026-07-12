@@ -8,6 +8,8 @@ import Dashboard from './pages/Dashboard';
 import VehicleRegistry from './pages/VehicleRegistry';
 import Drivers from './pages/Drivers';
 import TripDispatcher from './pages/TripDispatcher';
+import Maintenance from './pages/Maintenance';
+import FuelExpenses from './pages/FuelExpenses';
 
 function App() {
   return (
@@ -57,6 +59,28 @@ function App() {
               <ProtectedRoute>
                 <Layout>
                   <TripDispatcher />
+                </Layout>
+              </ProtectedRoute>
+            }
+          />
+
+          <Route
+            path="/maintenance"
+            element={
+              <ProtectedRoute>
+                <Layout>
+                  <Maintenance />
+                </Layout>
+              </ProtectedRoute>
+            }
+          />
+
+          <Route
+            path="/fuel-expenses"
+            element={
+              <ProtectedRoute>
+                <Layout>
+                  <FuelExpenses />
                 </Layout>
               </ProtectedRoute>
             }

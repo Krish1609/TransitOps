@@ -11,12 +11,18 @@ const dashboardRoutes = require('./routes/dashboard');
 const tripsRoutes = require('./routes/trips');
 const vehiclesRoutes = require('./routes/vehicles');
 const driversRoutes = require('./routes/drivers');
+const maintenanceRoutes = require('./routes/maintenance');
+const fuelRoutes = require('./routes/fuel');
+const expenseRoutes = require('./routes/expenses');
 
 app.use('/api/auth', authRoutes);
 app.use('/api/dashboard', dashboardRoutes);
 app.use('/api/trips', tripsRoutes);
 app.use('/api/vehicles', vehiclesRoutes);
 app.use('/api/drivers', driversRoutes);
+app.use('/api/maintenance', maintenanceRoutes);
+app.use('/api/fuel-logs', fuelRoutes);
+app.use('/api/expenses', expenseRoutes);
 
 app.get('/api/health', (req, res) => res.json({ status: 'ok' }));
 
